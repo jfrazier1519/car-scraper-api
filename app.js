@@ -1,8 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
 const HttpError = require("./src/models/http-error");
 const errorHandler = require("./src/middleware/error-handler");
+const dbConnect = require("./src/database/dbConnect");
 
 const app = express();
 
@@ -37,11 +37,7 @@ app.use(() => {
 
 app.use(errorHandler);
 
-
-const dbUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.5msbumk.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
-
-mongoose
-  .connect(dbUrl)
+dbConnect.connect()
   .then(() => {
     app.listen(5000, () => {
       console.log("Server running at port 5000");

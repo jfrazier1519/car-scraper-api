@@ -7,7 +7,7 @@ const createStore = async (req, res, next) => {
       name,
       address,
     };
-    const result = await storeServ.createSchedule(store);
+    const result = await storeServ.createStore(store);
     res.status(201).json({ store: result });
   } catch (error) {
     next(error);
@@ -35,9 +35,9 @@ const getStoreById = async (req, res, next) => {
 
 const updateStore = async (req, res, next) => {
   try {
-    const newStore = req.body;
+    const newStoreData = req.body;
     const storeId = req.params.id;
-    const updatedStore = await storeServ.updateStore(newStore, storeId);
+    const updatedStore = await storeServ.updateStore(newStoreData, storeId);
     res.json({ updatedStore });
   } catch (error) {
     next(error);

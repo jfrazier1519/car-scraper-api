@@ -35,9 +35,9 @@ const getUserById = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
     try {
-        const newUser = req.body;
+        const newUserData = req.body;
         const userId = req.params.id;
-        const updatedUser = await userServ.updateUser(newUser, userId);
+        const updatedUser = await userServ.updateUser(newUserData, userId);
         res.json({ updatedUser });
       } catch (error) {
         next(error);

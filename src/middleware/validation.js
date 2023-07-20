@@ -1,8 +1,10 @@
 const Joi = require('@hapi/joi');
 
 const userSchema = Joi.object({
-  name: Joi.string().required(),
-  address: Joi.string().required(),
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  email: Joi.string().required(),
+  isAdmin: Joi.boolean().required(),
 });
 
 const storeSchema = Joi.object({
@@ -11,8 +13,10 @@ const storeSchema = Joi.object({
 });
 
 const carSchema = Joi.object({
-  name: Joi.string().required(),
-  address: Joi.string().required(),
+  make: Joi.string().required(),
+  model: Joi.string().required(),
+  year: Joi.number().required(),
+  price: Joi.number().required(),
 });
 
 const idSchema = Joi.string().pattern(/^[0-9a-fA-F]{24}$/).required();

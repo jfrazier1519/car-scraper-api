@@ -9,6 +9,7 @@ const errorHandler = require("./src/middleware/error-handler");
 const cors = require('cors');
 const corsOptions = require('./src/config/cors-options');
 const rateLimit = require("express-rate-limit");
+const logger = require("./src/middleware/logger");
 
 const app = express();
 
@@ -18,9 +19,23 @@ const carRouter = require("./src/routes/car-routes");
 
 app.use(helmet());
 app.use(compression());
-app.use(morgan('combined'));
 app.use(cors(corsOptions));
 app.use(express.json());
+
+app.use(morgan((tokens, req, res) => JSON.stringify({
+  method: tokens.method(req, res),
+  url: tokens.url(req, res),
+  status: tokens.status(req, res),
+  contentLength: tokens.res(req, res, 'content-length'),
+  responseTime: tokens['response-time'](req, res)
+}), {
+  stream: {
+    write: (message) => {
+      logger.info(message.trim());
+    }
+  }
+}));
+
 
 // Rate limiter
 const apiLimiter = rateLimit({
@@ -46,9 +61,9 @@ mongoose
   .connect(dbUrl)
   .then(() => {
     app.listen(process.env.PORT, () => {
-      console.log(`Server running at port ${process.env.PORT}`);
+      logger.info(`Server running at port ${process.env.PORT}`);
     });
   })
   .catch((err) => {
-    console.log(err);
+    logger.error(err.message);
   });

@@ -1,5 +1,15 @@
 const HttpError = require("../models/http-error");
 const Car = require("../models/car");
+const logger = require("../middleware/logger");
+
+const handleDBOperation = async (operation, errorMessage) => {
+  try {
+    return await operation;
+  } catch (error) {
+    logger.error(`${errorMessage}: ${error.message}`, error);
+    throw new HttpError(errorMessage, 500);
+  }
+};
 
 const createCar = async (car) => {
   const newCar = new Car({
@@ -9,62 +19,44 @@ const createCar = async (car) => {
     price: car.price,
   });
 
-  try {
-    const savedCar = await newCar.save();
-    return savedCar;
-  } catch (err) {
-    console.error(`Error creating car: ${err.message}`, err);
-    throw new HttpError("Error creating car", 500);
-  }
+  return await handleDBOperation(newCar.save(), "Error creating car");
 };
 
 const getCars = async () => {
-  try {
-    const cars = await Car.find();
-    return cars;
-  } catch (err) {
-    console.error(`Error fetching cars: ${err.message}`, err);
-    throw new HttpError("Error fetching cars", 500);
-  }
+  return await handleDBOperation(Car.find(), "Error fetching cars");
 };
 
 const getCarById = async (carId) => {
-  try {
-    const car = await Car.findById(carId);
-    if (!car) {
-      throw new HttpError("Car not found", 404);
-    }
-    return car;
-  } catch (err) {
-    console.error(`Error fetching car: ${err.message}`, err);
-    throw new HttpError("Error fetching car", 500);
+  const car = await handleDBOperation(
+    Car.findById(carId),
+    "Error fetching car"
+  );
+  if (!car) {
+    throw new HttpError("Car not found", 404);
   }
+  return car;
 };
 
 const updateCar = async (newCarData, carId) => {
-  try {
-    const updatedCar = await Car.findByIdAndUpdate(carId, newCarData, { new: true });
-    if (!updatedCar) {
-      throw new HttpError("Car not found", 404);
-    }
-    return updatedCar;
-  } catch (err) {
-    console.error(`Error updating car: ${err.message}`, err);
-    throw new HttpError("Error updating car", 500);
+  const updatedCar = await handleDBOperation(
+    Car.findByIdAndUpdate(carId, newCarData, { new: true }),
+    "Error updating car"
+  );
+  if (!updatedCar) {
+    throw new HttpError("Car not found", 404);
   }
+  return updatedCar;
 };
 
 const deleteCar = async (carId) => {
-  try {
-    const deletedCar = await Car.findByIdAndRemove(carId);
-    if (!deletedCar) {
-      throw new HttpError("Car not found", 404);
-    }
-    return { message: "Car deleted successfully." };
-  } catch (err) {
-    console.error(`Error deleting car: ${err.message}`, err);
-    throw new HttpError("Error deleting car", 500);
+  const deletedCar = await handleDBOperation(
+    Car.findByIdAndRemove(carId),
+    "Error deleting car"
+  );
+  if (!deletedCar) {
+    throw new HttpError("Car not found", 404);
   }
+  return { message: "Car deleted successfully." };
 };
 
 module.exports = {

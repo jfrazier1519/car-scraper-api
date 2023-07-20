@@ -4,8 +4,8 @@ const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const HttpError = require("./src/models/http-error");
+const mongoose = require("mongoose");
 const errorHandler = require("./src/middleware/error-handler");
-const dbConnect = require("./src/database/dbConnect");
 const cors = require('cors');
 const corsOptions = require('./src/config/cors-options');
 const rateLimit = require("express-rate-limit");
@@ -40,7 +40,10 @@ app.use(() => {
 
 app.use(errorHandler);
 
-dbConnect.connect()
+const dbUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.5msbumk.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+
+mongoose
+  .connect(dbUrl)
   .then(() => {
     app.listen(process.env.PORT, () => {
       console.log(`Server running at port ${process.env.PORT}`);

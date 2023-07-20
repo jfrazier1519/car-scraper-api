@@ -1,12 +1,9 @@
 const storeServ = require("../services/store-serv");
+const { validateBody, validateId, storeSchema } = require('../middleware/validation');
 
 const createStore = async (req, res, next) => {
   try {
-    const { name, address } = req.body.store;
-    const store = {
-      name,
-      address,
-    };
+    const store = validateBody(req.body, storeSchema);
     const result = await storeServ.createStore(store);
     res.status(201).json({ store: result });
   } catch (error) {
@@ -25,7 +22,7 @@ const getStores = async (req, res, next) => {
 
 const getStoreById = async (req, res, next) => {
   try {
-    const storeId = req.params.id;
+    const storeId = validateId(req.params.id);
     const store = await storeServ.getStoreById(storeId);
     res.json({ store });
   } catch (error) {
@@ -35,9 +32,9 @@ const getStoreById = async (req, res, next) => {
 
 const updateStore = async (req, res, next) => {
   try {
-    const newStoreData = req.body;
-    const storeId = req.params.id;
-    const updatedStore = await storeServ.updateStore(newStoreData, storeId);
+    const store = validateBody(req.body, storeSchema);
+    const storeId = validateId(req.params.id);
+    const updatedStore = await storeServ.updateStore(store, storeId);
     res.json({ updatedStore });
   } catch (error) {
     next(error);
@@ -45,8 +42,8 @@ const updateStore = async (req, res, next) => {
 };
 
 const deleteStore = async (req, res, next) => {
-  const storeId = req.params.id;
   try {
+    const storeId = validateId(req.params.id);
     await storeServ.deleteStore(storeId);
     res.status(200).json({ message: "Deleted store successfully. " });
   } catch (error) {

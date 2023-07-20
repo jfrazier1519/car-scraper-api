@@ -1,0 +1,45 @@
+{
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:16",
+  "remoteUser": "node",
+  "name": "api",
+  "postCreateCommand": "npm config set fund false && npm config set audit false;npm install;",
+  "postStartCommand": "npm start",
+  "remoteEnv": {
+    "NODE_ENV": "dev"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "aaron-bond.better-comments",
+        "VisualStudioExptTeam.vscodeintellicode",
+        "christian-kohler.npm-intellisense",
+        "christian-kohler.path-intellisense"
+      ],
+      "settings": {
+        "vsicons.dontShowNewVersionMessage": true,
+        "editor.formatOnSave": true,
+        "editor.guides.bracketPairs": true,
+        "files.encoding": "utf8",
+        "files.trimFinalNewlines": true,
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "markdown.preview.scrollEditorWithPreview": true,
+        "markdown.preview.scrollPreviewWithEditor": true,
+        "editor.codeActionsOnSave": {
+          "source.removeUnusedImports": true,
+          "source.organizeImports": true
+        },
+        "[json]": {
+          "files.insertFinalNewline": false,
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[jsonc]": {
+          "files.insertFinalNewline": false,
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+      }
+    }
+  }
+}

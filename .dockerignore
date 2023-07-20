@@ -1,0 +1,4 @@
+#Prevents local modules and debug logs from being copied onto the docker image
+# eliminates the possibility of overwriting modules installed within the image
+node_modules
+npm-debug.log

@@ -1,13 +1,13 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
-const helmet = require('helmet');
-const compression = require('compression');
-const morgan = require('morgan');
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
 const HttpError = require("./src/models/http-error");
 const mongoose = require("mongoose");
 const errorHandler = require("./src/middleware/error-handler");
-const cors = require('cors');
-const corsOptions = require('./src/config/cors-options');
+const cors = require("cors");
+const corsOptions = require("./src/config/cors-options");
 const rateLimit = require("express-rate-limit");
 const logger = require("./src/middleware/logger");
 
@@ -22,25 +22,30 @@ app.use(compression());
 app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use(morgan((tokens, req, res) => JSON.stringify({
-  method: tokens.method(req, res),
-  url: tokens.url(req, res),
-  status: tokens.status(req, res),
-  contentLength: tokens.res(req, res, 'content-length'),
-  responseTime: tokens['response-time'](req, res)
-}), {
-  stream: {
-    write: (message) => {
-      logger.info(message.trim());
+app.use(
+  morgan(
+    (tokens, req, res) =>
+      JSON.stringify({
+        method: tokens.method(req, res),
+        url: tokens.url(req, res),
+        status: tokens.status(req, res),
+        contentLength: tokens.res(req, res, "content-length"),
+        responseTime: tokens["response-time"](req, res),
+      }),
+    {
+      stream: {
+        write: (message) => {
+          logger.info(message.trim());
+        },
+      },
     }
-  }
-}));
-
+  )
+);
 
 // Rate limiter
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use(apiLimiter);
 
